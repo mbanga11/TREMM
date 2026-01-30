@@ -27,7 +27,7 @@ module.exports = {
     destinationCollector.on('collect', m1 => {
       tripDetails.destination = m1.content; // Save to our object
 
-      interaction.followUp('What are the trip dates?');
+      interaction.followUp('What are the trip dates? (MM/DD/YYYY to MM/DD/YYYY)');
 
       // --- STEP 2: Collect Dates (Nested inside the first) ---
       const datesCollector = interaction.channel.createMessageCollector({ 
@@ -42,9 +42,9 @@ module.exports = {
         // --- STEP 3: Final Output ---
         // Now we can use both tripDetails.destination and tripDetails.dates
         interaction.followUp(
-            `✅ **Trip Plan Created!**\n` +
-            `📍 **Destination:** ${tripDetails.destination}\n` +
-            `📅 **Dates:** ${tripDetails.dates}`
+            `**Trip Plan Created:**\n` +
+            `**Destination:** ${tripDetails.destination}\n` +
+            `**Dates:** ${tripDetails.dates}`
         );
       });
 
