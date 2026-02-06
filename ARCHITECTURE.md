@@ -7,4 +7,4 @@ Tanisha: <img width="652" height="658" alt="UseCaseDiagram-TanishaThakare" src="
 
 Kam: 
 Raya: 
-Marco: 
+Marco: <img width="900" alt="System Context Diagram - Marco Chan" src="https://github.com/user-attachments/assets/99774f3a-2b51-48ba-83b5-ad51f57e22dd" />
