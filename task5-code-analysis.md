@@ -1,1 +1,3 @@
-
+- **Manraj Banga**  
+  - Unit testing (minimum 3 tests)  
+  - Smoke testing of core bot functionality  
