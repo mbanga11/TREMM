@@ -169,3 +169,24 @@ Mitigation:
 ### Conclusion
 The bot currently handles input validation partially but could improve consistency in error handling, retry logic, and rate limiting. Addressing these areas would reduce technical risk and improve reliability.
 
+
+## 4. Marco Chan: Automated Fuzz Testing
+**Scope:** `/hotels` (Trip Planning Module) & General Command Handler
+**Effort:** Implemented two fuzzing suites to test stability against malformed inputs.
+
+**Files Created:**
+* `src/fuzz/fuzz-hotel.js` (Targeted Fuzzer)
+* `src/fuzz/fuzz-bot.js` (General Command Fuzzer)
+
+**Methodology:**
+1.  **Targeted Fuzzing:** Created a script designed to stress-test the core trip-planning logic (`getHotelOptions`). It bypassed the Discord UI to inject raw garbage data directly into the function, including SQL injection strings, buffer overflows (2000+ chars), invalid dates, and null/undefined values.
+2.  **General Bot Fuzzing:** Developed a dynamic analysis tool that loads all command files and simulates Discord interactions with invalid data types to identify unhandled exceptions across the entire codebase.
+
+**Findings:**
+* **Critical Crash (Hotels):** The hotel search logic failed **2 out of 10** stress tests. Passing `null` or `undefined` (simulating a missing API response) caused the bot to crash immediately with a `TypeError`. This is a high-severity issue as it takes the bot offline.
+* **General Command Fragility:** The general fuzzer revealed that the `/meme` command crashes on almost any invalid input (8/8 tests failed), throwing "Received one or more errors."
+* **Resilience:** The hotel logic successfully handled 8 other attack vectors, including SQL injection attempts and massive string payloads, without crashing.
+
+**Remediation:**
+* **Guard Clauses:** Implement "guard clauses" in helper functions to validate that objects exist before attempting to read properties from them.
+* **Try/Catch Blocks:** The `/meme` command and other auxiliary commands need to be wrapped in try/catch blocks to ensure that input parsing errors result in a user-friendly error message rather than a bot crash.
