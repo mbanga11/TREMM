@@ -64,23 +64,25 @@ export default {
     message += `Source: ${source}\n\n`;
     
     activities.slice(0, 5).forEach((a, i) => {
-        const price = a.price ? a.price : "N/A";
-        const desc = a.description ? shorten(a.description, 160) : "";
-        const link = a.bookingLink ? `\nBook: ${a.bookingLink}` : "";
-      
-        // Title
-        message += `**${i + 1}. ${a.name}**\n`;
-      
-        // Text immediately under title
-        message += `Price: ${price}`;
-        if (desc) message += ` — ${desc}`;
-      
-        // Booking link (only shows if API provides it)
-        message += link;
-      
-        // ONE blank line before next title
-        message += `\n\n`;
-      });
+      const price = a.price ? a.price : "N/A";
+      const desc = a.description ? shorten(a.description, 160) : null;
+      const link = a.bookingLink ? `Book: ${a.bookingLink}` : null;
+    
+      // Title
+      message += `**${i + 1}. ${a.name}**\n`;
+    
+      // Price line
+      message += `Price: ${price}\n`;
+    
+      // Description line (only if exists)
+      if (desc) message += `Description: ${desc}\n`;
+    
+      // Booking link (only if exists)
+      if (link) message += `${link}\n`;
+    
+      // spacing between activities
+      message += `\n`;
+    });
 
 
     await interaction.editReply(message);
