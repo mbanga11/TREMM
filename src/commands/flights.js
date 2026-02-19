@@ -1,5 +1,7 @@
+// src/commands/flights.js
 const { SlashCommandBuilder } = require("discord.js");
 const { getFlightOptions } = require("../helpers/flights");
+const { formatPrice } = require("../helpers/utils");
 
 // Format ISO datetime like "2026-02-20T09:18:00" → "Feb 20 • 9:18 AM"
 function formatDateTime(isoString) {

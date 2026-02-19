@@ -1,5 +1,6 @@
 // src/helpers/hotels.js
 import Amadeus from 'amadeus';
+import { formatPrice } from './utils.js';
 
 function validateDates(checkIn, checkOut) {
     const d1 = new Date(checkIn);
@@ -29,7 +30,7 @@ export async function getHotelOptions({ cityCode, checkIn, checkOut, adults }) {
 
     try {
         const hotelListResponse = await amadeus.referenceData.locations.hotels.byCity.get({
-            cityCode: cityCode
+            cityCode
         });
 
         if (!hotelListResponse.data || hotelListResponse.data.length === 0) {
@@ -42,10 +43,10 @@ export async function getHotelOptions({ cityCode, checkIn, checkOut, adults }) {
         const hotelIds = hotelListResponse.data.slice(0, 5).map(hotel => hotel.hotelId).join(',');
 
         const offersResponse = await amadeus.shopping.hotelOffersSearch.get({
-            hotelIds: hotelIds,
+            hotelIds,
             checkInDate: checkIn,
             checkOutDate: checkOut,
-            adults: adults
+            adults
         });
 
         const data = offersResponse.data;
@@ -57,25 +58,21 @@ export async function getHotelOptions({ cityCode, checkIn, checkOut, adults }) {
             };
         }
 
-        const simplified = data.slice(0, 5).map(offer => {
-            return {
-                name: offer.hotel.name,
-                stars: offer.hotel.rating ? Math.round(offer.hotel.rating) : 0,
-                price: offer.offers?.[0]?.price?.total || 'N/A',
-                currency: offer.offers?.[0]?.price?.currency || '',
-                city: cityCode
-            };
-        });
+        const simplified = data.slice(0, 5).map(offer => ({
+            name: offer.hotel.name,
+            stars: offer.hotel.rating ? Math.round(offer.hotel.rating) : 0,
+            price: offer.offers?.[0]?.price?.total || 'N/A',
+            currency: offer.offers?.[0]?.price?.currency || 'USD',
+            city: cityCode
+        }));
 
         return { ok: true, hotels: simplified };
 
     } catch (error) {
         console.error("Amadeus API Error:", error.response ? error.response.result : error);
-        
         if (error.response && error.response.statusCode === 400) {
             return { ok: false, message: `❌ Could not find valid hotel data for **${cityCode}**. Try a major hub like LON, NYC, or PAR.` };
         }
-        
         return { ok: false, message: '❌ Error communicating with Amadeus API.' };
     }
 }

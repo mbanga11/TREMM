@@ -1,7 +1,7 @@
 // src/helpers/flights.js
 import Amadeus from "amadeus";
+import { formatPrice } from "./utils.js";
 
-// Small airline code → name map (easy to extend)
 const AIRLINES = {
   F9: "Frontier Airlines",
   AS: "Alaska Airlines",
@@ -26,8 +26,7 @@ async function getFlightOptions({ origin, destination, departureDate, adults = 1
   if (!amadeusClientId || !amadeusClientSecret) {
     return {
       ok: false,
-      message:
-        "Amadeus credentials not found. Set AMADEUS_CLIENT_ID and AMADEUS_CLIENT_SECRET in Codespaces secrets.",
+      message: "Amadeus credentials not found. Set AMADEUS_CLIENT_ID and AMADEUS_CLIENT_SECRET in Codespaces secrets.",
     };
   }
 
@@ -65,13 +64,11 @@ async function getFlightOptions({ origin, destination, departureDate, adults = 1
       const price = offer.price?.total;
 
       const code = firstSeg?.carrierCode;
-      const airline = AIRLINES[code]
-        ? `${AIRLINES[code]} (${code})`
-        : code || "N/A";
+      const airline = AIRLINES[code] ? `${AIRLINES[code]} (${code})` : code || "N/A";
 
       return {
         airline,
-        price: price ? `$${price}` : "N/A",
+        price: formatPrice(price, 'USD'),
         departTime: firstSeg?.departure?.at || "N/A",
         arriveTime: lastSeg?.arrival?.at || "N/A",
         stops,
