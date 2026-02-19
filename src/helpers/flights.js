@@ -35,14 +35,37 @@ async function getFlightOptions({ origin, destination, departureDate, adults = 1
     clientSecret: amadeusClientSecret,
   });
 
+  const MAX_RETRIES = 2;
+  const BASE_DELAY = 500; // milliseconds
+
   try {
-    const response = await amadeus.shopping.flightOffersSearch.get({
-      originLocationCode: origin.toUpperCase(),
-      destinationLocationCode: destination.toUpperCase(),
-      departureDate,
-      adults,
-      max: 5,
-    });
+    //API retry logic implemented here
+    let response;
+    let lastError;
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        response = await amadeus.shopping.flightOffersSearch.get({
+          originLocationCode: origin.toUpperCase(),
+          destinationLocationCode: destination.toUpperCase(),
+          departureDate,
+          adults,
+          max: 5,
+        });
+        break; // success
+      } catch (err) {
+        lastError = err;
+        const status = err?.response?.statusCode;
+
+        // don't retry client errors (4xx)
+        if (status && status >= 400 && status < 500) throw err;
+
+        if (attempt === MAX_RETRIES) throw lastError;
+
+        // wait before retrying (linear backoff)
+        await new Promise(resolve => setTimeout(resolve, BASE_DELAY * (attempt + 1)));
+      }
+    }
 
     const offers = response?.data || [];
 
@@ -68,7 +91,7 @@ async function getFlightOptions({ origin, destination, departureDate, adults = 1
 
       return {
         airline,
-        price: formatPrice(price, 'USD'),
+        price: formatPrice(price, "USD"),
         departTime: firstSeg?.departure?.at || "N/A",
         arriveTime: lastSeg?.arrival?.at || "N/A",
         stops,
