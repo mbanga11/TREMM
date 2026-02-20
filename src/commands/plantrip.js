@@ -1,6 +1,6 @@
 // src/commands/plantrip.js
 const { SlashCommandBuilder } = require('discord.js');
-const { geocodePlace } = require('../helpers/geocode.js'); // your helper
+const { geocodePlace } = require('../helpers/geocode.js'); 
 
 // -------------------- Date validation helper --------------------
 function validateDates(input) {
@@ -29,7 +29,7 @@ module.exports = {
     .setDescription('Start Planning a Trip!'),
 
   async execute(interaction) {
-    // Must defer reply first in Discord.js v14
+    
     await interaction.deferReply();
 
     const tripDetails = { destination: '', dates: '' };
