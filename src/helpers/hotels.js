@@ -112,3 +112,22 @@ export async function getHotelOptions({ cityCode, checkIn, checkOut, adults }) {
         return { ok: false, message: 'Error communicating with Amadeus API.' };
     }
 }
+
+//THIS FUNCTION IS JUST FOR DEMO PURPOSES FOR BOT PROJECT TASK #6
+export async function getHotelOptionsRetryDemo({ cityCode, retryCallback }) {
+    const MAX_RETRIES = 2;
+    const BASE_DELAY = 500; // ms
+    let lastError;
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            // force a fake API error to simulate retries
+            throw { response: { statusCode: 500 } };
+        } catch (err) {
+            lastError = err;
+            if (retryCallback) await retryCallback(`Retry attempt ${attempt + 1} failed for ${cityCode}`);
+            if (attempt === MAX_RETRIES) return { ok: false, message: `Demo finished: failed after ${MAX_RETRIES + 1} attempts` };
+            await new Promise(resolve => setTimeout(resolve, BASE_DELAY * (attempt + 1)));
+        }
+    }
+}
