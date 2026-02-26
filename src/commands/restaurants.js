@@ -31,7 +31,7 @@ export default {
           `Category: ${r.category}`,
           `Address: ${r.address}`,
           r.description ? `Description: ${r.description}` : null,
-          `View on Google: <${r.url}>`
+          `View on Google: <${r.url}>`,
           ""
         );
       });
