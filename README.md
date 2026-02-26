@@ -78,6 +78,15 @@ TREMM is a Discord bot built for CSS 360 to help groups plan trips without leavi
 - **Links:** includes a clickable link for each hotel to view details externally
 
 ---
+### ✅ `/restaurants <city>`
+**User story:** As a user, I want the bot to suggest top restaurants in a destination so that I can easily plan meals and experience local popular foods.
+(will continue - Tanisha)
+
+
+
+
+
+
 
 ## Status
 - ✅ Task 1 complete: project environment set up, Discord servers created, and GitHub project board created.
@@ -110,4 +119,5 @@ After pulling the repo and installing dependencies:
 - Added activity suggestions for destinations
 - Added flight lookup command (top results with airline/price/schedule/stops + fallback behavior)
 - Added hotel lookup command using Amadeus Hotel Search (top 3 hotels, validation, links, and pricing)
+
 
